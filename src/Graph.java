@@ -20,4 +20,12 @@ public class Graph<E> {
             nodes.get(from).add(new Vertex<>(from, to, cost));
         }
     }
+
+    public boolean contains (E node) {
+        return nodes.containsKey(node);
+    }
+
+    public HashMap<E, List<Vertex<E>>> getGraph () {
+        return nodes;
+    }
 }

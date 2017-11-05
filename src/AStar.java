@@ -19,6 +19,7 @@ public class AStar<E> {    // :-(
 
         for(E n : graph.nodes.keySet()) {                                 //Init costs to inf
             costs.put(n, Integer.MAX_VALUE);
+            predecessor.put(n, null);
         }
         costs.put(from, 0);                                 //Cost for from is 0
         predecessor.put(from, null);   //Predecessor to from is from
@@ -27,21 +28,22 @@ public class AStar<E> {    // :-(
     public List<Vertex<E>> computePath(E from, E to) {
         init(from);
         PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
-        q.add(new Node(from, 0));
-        visited.add(from);
+        q.add(new Node(from, 0, 0));
         while(!q.isEmpty()) {
-            Node n = q.poll();               //Get the node we're processing
+            E n = q.poll().node;               //Get the node we're processing
+            if(n == to)
+                break;
 
-            if(!visited.contains(n.node)) {
-                visited.add(n.node);
+            if(!visited.contains(n)) {
+                visited.add(n);
 
-                for(Vertex<E> nv : graph.nodes.get(n.node)) {
+                for(Vertex<E> nv : graph.nodes.get(n)) {
                     E e = nv.getTo();
 
-                    if(!visited.contains(e) && costs.get(e) > costs.get(n.node) + nv.cost) {
-                        costs.put(e, costs.get(n.node)+nv.cost);
+                    if(!visited.contains(e) && costs.get(e) > costs.get(n) + nv.cost) {
+                        costs.put(e, costs.get(n)+nv.cost);
                         predecessor.put(e,nv);
-                        q.add(new Node(e, costs.get(e)));
+                        q.add(new Node(e, costs.get(e), 0));
                     }
                 }
             }
@@ -49,11 +51,11 @@ public class AStar<E> {    // :-(
         List<Vertex<E>> ans = new LinkedList<>();
 
         Vertex<E> v = predecessor.get(to);
-        ans.add(v);
-        while((v = predecessor.get(v.from)) != null) {
+        while(v != null) {
             ans.add(v);
+            v = predecessor.get(v.from);
         }
-
+        ans.add(new Vertex<>(from,from,0));
         Collections.reverse(ans);
         path = ans;
         return ans;
@@ -84,18 +86,20 @@ public class AStar<E> {    // :-(
 
     class Node {
         final int cost;
+        final int distance;
         final E node;
 
-        Node (E n, int c) {
+        Node (E n, int c, int d) {
             cost = c;
             node = n;
+            distance = d;
         }
     }
 
     public class NodeComparator implements Comparator<Node> {
 
         public int compare(Node a, Node b) {
-            return 0;
+            return (a.cost+a.distance) - (b.cost+b.distance);
         }
     }
 }
