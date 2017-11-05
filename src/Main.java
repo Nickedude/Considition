@@ -6,7 +6,7 @@ public class Main {
         Node<String> n = new Node<>();
         Node<String> a = new Node(n, 1, 4);
 
-        
+
 
 
     }

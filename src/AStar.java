@@ -3,44 +3,45 @@ import java.util.*;
 public class AStar<E> {    // :-(
 
     final Graph<E> graph;
-    HashMap<Node<E>,Vertex<E>> predecessor;
-    HashMap<Node<E>,Integer> costs;
-    HashSet<Node<E>> visited;
+    HashMap<E,Vertex<E>> predecessor;
+    HashMap<E,Integer> costs;
+    HashSet<E> visited;
+    public List<Vertex<E>> path;
 
     public AStar (Graph g) {
         graph = g;
     }
 
-    public void init(Node from) {
+    public void init(E from) {
         costs = new HashMap<>();
         visited = new HashSet<>();
         predecessor = new HashMap<>();
 
-        for(Node n : graph.nodes) {                                 //Init costs to inf
+        for(E n : graph.nodes.keySet()) {                                 //Init costs to inf
             costs.put(n, Integer.MAX_VALUE);
         }
         costs.put(from, 0);                                 //Cost for from is 0
         predecessor.put(from, null);   //Predecessor to from is from
     }
 
-    public List<Vertex<E>> shortestDijkstraPath(Node<E> from, Node<E> to) {
+    public List<Vertex<E>> computePath(E from, E to) {
         init(from);
-        PriorityQueue<Node<E>> q = new PriorityQueue<>(new NodeComparator());
-        q.add(from);
+        PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
+        q.add(new Node(from, 0));
         visited.add(from);
         while(!q.isEmpty()) {
-            Node<E> n = q.poll();               //Get the node we're processing
+            Node n = q.poll();               //Get the node we're processing
 
-            if(!visited.contains(n)) {
-                visited.add(n);
+            if(!visited.contains(n.node)) {
+                visited.add(n.node);
 
-                for(Vertex<E> nv : n.neighbours) {
-                    Node<E> w = nv.getTo();
+                for(Vertex<E> nv : graph.nodes.get(n.node)) {
+                    E e = nv.getTo();
 
-                    if(!visited.contains(w) && costs.get(w) > costs.get(n) + nv.cost) {
-                        costs.put(w, costs.get(n)+nv.cost);
-                        predecessor.put(w,nv);
-                        q.add(w);
+                    if(!visited.contains(e) && costs.get(e) > costs.get(n.node) + nv.cost) {
+                        costs.put(e, costs.get(n.node)+nv.cost);
+                        predecessor.put(e,nv);
+                        q.add(new Node(e, costs.get(e)));
                     }
                 }
             }
@@ -54,12 +55,46 @@ public class AStar<E> {    // :-(
         }
 
         Collections.reverse(ans);
+        path = ans;
         return ans;
     }
 
-    public class NodeComparator implements Comparator<Node<E>> {
+    public Iterator<E> getPath() {
+        List<E> list = new ArrayList<>();
 
-        public int compare(Node<E> a, Node<E> b) {
+        for(Vertex<E> v : path) {
+            list.add(v.to);
+        }
+
+        return list.iterator();
+    }
+
+    public int getPathLength() {
+        if(path != null) {
+            int i = 0;
+            for (Vertex<E> v : path) {
+                i += v.cost;
+            }
+
+            return i;
+        }
+
+        return -1;
+    }
+
+    class Node {
+        final int cost;
+        final E node;
+
+        Node (E n, int c) {
+            cost = c;
+            node = n;
+        }
+    }
+
+    public class NodeComparator implements Comparator<Node> {
+
+        public int compare(Node a, Node b) {
             return 0;
         }
     }

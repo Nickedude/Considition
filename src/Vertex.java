@@ -1,15 +1,15 @@
 public class Vertex <E> {
-    Node<E> from;
-    Node<E> to;
+    E from;
+    E to;
     Integer cost;
 
-    public Vertex (Node<E> f, Node<E> t, int c) {
+    public Vertex (E f, E t, int c) {
         from = f;
         to = t;
         cost = c;
     }
 
-    public Node<E> getTo() {
+    public E getTo() {
         return to;
     }
 
