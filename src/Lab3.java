@@ -1,4 +1,4 @@
-	import Lab3Help.*;
+import Lab3Help.*;
 import java.util.*;
 import java.io.*;
 
