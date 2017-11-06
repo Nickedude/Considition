@@ -31,4 +31,8 @@ class Graph<E> {
         return 0;
     }
 
+    int getDistance(E from, E to) {
+        return 0;
+    }
+
 }

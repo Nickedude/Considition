@@ -29,7 +29,7 @@ class AStar<E> {    // :-(
     public List<Vertex<E>> computePath(E from, E to) {
         init(from);
         PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
-        q.add(new Node(from, 0, 0, 0));
+        q.add(new Node(from, 0, graph.getDistance(from, to), 0));
         while (!q.isEmpty()) {
             Node wrapper = q.poll();            // Get the data of the wrapped node
             E n = wrapper.node;                 // Get the node we're processing
@@ -45,11 +45,12 @@ class AStar<E> {    // :-(
                     int wait = graph.getWait(nv, wrapper.time);
                     int time = wrapper.time + wait + nv.distance;
                     int cost = costs.get(n) + nv.distance + wait;
+                    int dist = graph.getDistance(e, to);
 
                     if (!visited.contains(e) && costs.get(e) > cost) {
                         costs.put(e, cost);
                         predecessor.put(e, nv);
-                        q.add(new Node(e, cost, 0, time));
+                        q.add(new Node(e, cost, dist, time));
                     }
                 }
             }
