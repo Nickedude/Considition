@@ -1,12 +1,12 @@
 public class Vertex <E> {
     E from;
     E to;
-    Integer cost;
+    int distance;
 
-    public Vertex (E f, E t, int c) {
+    public Vertex (E f, E t, int d) {
         from = f;
         to = t;
-        cost = c;
+        distance = d;
     }
 
     public E getTo() {

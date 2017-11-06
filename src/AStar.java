@@ -26,7 +26,7 @@ class AStar<E> {    // :-(
         predecessor.put(from, null);   //Predecessor to from is from
     }
 
-    List<Vertex<E>> computePath(E from, E to) {
+    public List<Vertex<E>> computePath(E from, E to) {
         init(from);
         PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
         q.add(new Node(from, 0, 0, 0, 0));
@@ -41,15 +41,16 @@ class AStar<E> {    // :-(
 
                 for (Vertex<E> nv : graph.nodes.get(n)) {
                     E e = nv.getTo();
-                                                // Needs to take into account waiting in score comparison.
-                    if (!visited.contains(e) && costs.get(e) > costs.get(n) + (nv.cost)) {
-                        costs.put(e, costs.get(n) + nv.cost);
+                    int wait = graph.getWait(nv, wrapper.time);
+                    if (!visited.contains(e) && costs.get(e) > costs.get(n) + (nv.distance + wait)) {
+                        costs.put(e, costs.get(n) + (nv.distance + wait));
                         predecessor.put(e, nv);
-                        q.add(new Node(e, costs.get(e), 0, wrapper.time + wrapper.waiting + wrapper.cost, 0));
+                        q.add(new Node(e, costs.get(e), wrapper.distance, wrapper.time + wrapper.waiting + wrapper.distance, wait));
                     }
                 }
             }
         }
+
         List<Vertex<E>> ans = new LinkedList<>();
 
         Vertex<E> v = predecessor.get(to);
@@ -65,7 +66,7 @@ class AStar<E> {    // :-(
         return ans;
     }
 
-    Iterator<E> getPath() {
+    public Iterator<E> getPath() {
         List<E> list = new ArrayList<>();
 
         for (Vertex<E> v : path) {
@@ -75,28 +76,28 @@ class AStar<E> {    // :-(
         return list.iterator();
     }
 
-    int getPathLength() {
+    public int getPathLength() {
         if (path != null) {
             int i = 0;
             for (Vertex<E> v : path) {
-                i += v.cost;
+                i += v.distance;
             }
             return i;
         }
         return -1;
     }
 
-    class Node {
-        final int cost;
-        final int distance;
-        final int time;
-        final int waiting;
+    public class Node {
+        final int cost; // Current shortest path to this node.
+        final int distance; // Distance to arrive at this node from the previous.
+        final int time; // Time that you arrive at this node.
+        final int waiting; // Time that you will be waiting at the previous node before going to this node.
 
         final E node;
 
         Node(E n, int c, int d, int t, int w) {
-            cost = c;
             node = n;
+            cost = c;
             distance = d;
             time = t;
             waiting = w;
@@ -105,7 +106,7 @@ class AStar<E> {    // :-(
 
     public class NodeComparator implements Comparator<Node> {
         public int compare(Node a, Node b) {
-            return (a.cost + a.distance + a.waiting) - (b.cost + b.distance + b.waiting);
+            return a.cost - b.cost;
         }
     }
 }

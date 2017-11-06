@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
 
 class Graph<E> {
     HashMap<E,List<Vertex<E>>> nodes;
-    HashMap<E, List> timetable;
+    HashMap<E, SortedSet<Integer>> timetable;
 
     Graph () {
         nodes = new HashMap<>();
@@ -26,11 +27,8 @@ class Graph<E> {
         return nodes.containsKey(node);
     }
 
-    public int getWait(E from, E to,  int time) {
+    int getWait(Vertex<E> v,  int time) {
         return 0;
     }
 
-    HashMap<E, List<Vertex<E>>> getGraph () {
-        return nodes;
-    }
 }
