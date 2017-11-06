@@ -29,7 +29,7 @@ class AStar<E> {    // :-(
     public List<Vertex<E>> computePath(E from, E to) {
         init(from);
         PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
-        q.add(new Node(from, 0, 0, 0, 0));
+        q.add(new Node(from, 0, 0));
         while (!q.isEmpty()) {
             Node wrapper = q.poll();            // Get the data of the wrapped node
             E n = wrapper.node;                 // Get the node we're processing
@@ -41,11 +41,15 @@ class AStar<E> {    // :-(
 
                 for (Vertex<E> nv : graph.nodes.get(n)) {
                     E e = nv.getTo();
+
                     int wait = graph.getWait(nv, wrapper.time);
-                    if (!visited.contains(e) && costs.get(e) > costs.get(n) + (nv.distance + wait)) {
-                        costs.put(e, costs.get(n) + (nv.distance + wait));
+                    int time = wrapper.time + wait + nv.distance;
+                    int cost = costs.get(n) + nv.distance + wait;
+
+                    if (!visited.contains(e) && costs.get(e) > cost) {
+                        costs.put(e, cost);
                         predecessor.put(e, nv);
-                        q.add(new Node(e, costs.get(e), wrapper.distance, wrapper.time + wrapper.waiting + wrapper.distance, wait));
+                        q.add(new Node(e, cost, time));
                     }
                 }
             }
@@ -89,18 +93,13 @@ class AStar<E> {    // :-(
 
     public class Node {
         final int cost; // Current shortest path to this node.
-        final int distance; // Distance to arrive at this node from the previous.
         final int time; // Time that you arrive at this node.
-        final int waiting; // Time that you will be waiting at the previous node before going to this node.
-
         final E node;
 
-        Node(E n, int c, int d, int t, int w) {
+        Node(E n, int c, int t) {
             node = n;
             cost = c;
-            distance = d;
             time = t;
-            waiting = w;
         }
     }
 
