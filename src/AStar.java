@@ -29,7 +29,7 @@ class AStar<E> {    // :-(
     public List<Vertex<E>> computePath(E from, E to) {
         init(from);
         PriorityQueue<Node> q = new PriorityQueue<>(new NodeComparator());
-        q.add(new Node(from, 0, 0));
+        q.add(new Node(from, 0, 0, 0));
         while (!q.isEmpty()) {
             Node wrapper = q.poll();            // Get the data of the wrapped node
             E n = wrapper.node;                 // Get the node we're processing
@@ -49,7 +49,7 @@ class AStar<E> {    // :-(
                     if (!visited.contains(e) && costs.get(e) > cost) {
                         costs.put(e, cost);
                         predecessor.put(e, nv);
-                        q.add(new Node(e, cost, time));
+                        q.add(new Node(e, cost, 0, time));
                     }
                 }
             }
@@ -92,20 +92,22 @@ class AStar<E> {    // :-(
     }
 
     public class Node {
-        final int cost; // Current shortest path to this node.
+        final int cost; // Current lowest cost to this node.
         final int time; // Time that you arrive at this node.
+        final int distance; // Distance to goal.
         final E node;
 
-        Node(E n, int c, int t) {
+        Node(E n, int c, int d, int t) {
             node = n;
             cost = c;
+            distance = d;
             time = t;
         }
     }
 
     public class NodeComparator implements Comparator<Node> {
         public int compare(Node a, Node b) {
-            return a.cost - b.cost;
+            return (a.cost + a.distance) - (b.cost + b.distance);
         }
     }
 }
