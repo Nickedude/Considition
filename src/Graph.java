@@ -2,7 +2,9 @@ import java.util.*;
 
 class Graph<E> {
     HashMap<E,List<Vertex<E>>> nodes;
-    HashMap<Vertex<E>, TreeSet<Integer>> timetable;
+    private HashMap<Vertex<E>, TreeSet<Integer>> timetable;
+
+    private static int LAST_DEPARTED_TRAIN = 10000000;
 
     Graph () {
         nodes = new HashMap<>();
@@ -28,7 +30,8 @@ class Graph<E> {
 
     int getWait(Vertex<E> v,  int time) {
         if(timetable.containsKey(v)) {
-            return timetable.get(v).ceiling(time);
+            Integer w = timetable.get(v).ceiling(time);
+            return (w != null ? w : LAST_DEPARTED_TRAIN);
         }
         return 0;
     }
