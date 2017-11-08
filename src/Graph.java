@@ -31,7 +31,7 @@ class Graph<E> {
     int getWait(Vertex<E> v,  int time) {
         if(timetable.containsKey(v)) {
             Integer w = timetable.get(v).ceiling(time);
-            return (w != null ? w : LAST_DEPARTED_TRAIN);
+            return (w != null ? w - time: LAST_DEPARTED_TRAIN);
         }
         return 0;
     }
