@@ -12,8 +12,12 @@ public class Main {
 	
 	// TODO: Enter your API key
 	static final String API_KEY = "3abea427-dd03-4706-b621-a89a093b2771";
-	
-	static List<String> solve(GameState game) {
+	public static GameState gameState;
+    static HashSet<City> notVisited = new HashSet<>();
+
+
+    static List<String> solve(GameState game) {
+	    gameState = game;
 		/*
          * --- Available commands ---
          * TRAVEL [NORTH|SOUTH|WEST|EAST]
@@ -28,10 +32,12 @@ public class Main {
         HashMap<Location, City> cityLocation = new HashMap<>();
         Location[][] locations = new Location[game.map.length][game.map[0].length];
 
+        int citiesToVisit = 0;
+
         for(TransportationMethod t :  game.transportation) {
             double time = 1.0 / t.speed;
             double pollution = time * t.pollutions;
-            int cost = (int) (pollution * 1000000 + time * 1000000);
+            int cost = (int) (pollution * 10000000);
             costs.put(t.name, cost);
         }
 
@@ -84,8 +90,12 @@ public class Main {
         }
 
         for(City c : game.cities) {
+            notVisited.add(c);
             cityCoords.put(c.name, c);
             cityLocation.put(locations[c.y][c.x], c);
+            for(Vertex<Location> v : g.ingoing.get(locations[c.y][c.x])) {
+                v.distance =  v.distance / 1000;
+            }
         }
 
         for(City c : game.cities) {
@@ -116,15 +126,17 @@ public class Main {
             }
         }
 
-        List<City> toVisit = new LinkedList<>();
-
         for(GameObjective go : game.objectives) {
             if (go instanceof VisitCityObjective) {
                 City c = cityCoords.get(((VisitCityObjective) go).x);
-                for(Vertex<Location> v : g.nodes.get(locations[c.y][c.x])) {
-                    v.distance = v.distance - go.points * 100000;
+                for(Vertex<Location> v : g.ingoing.get(locations[c.y][c.x])) {
+                    v.distance =  v.distance - go.points * 100000;
                 }
             }
+
+            /*if(go instanceof ) {
+
+            }*/
 
             if(go instanceof QuickFarCityVisitObjective) {
                 List<City> candidates = new LinkedList<>();
@@ -140,8 +152,12 @@ public class Main {
                             City c2 = candidates.get(j);
                             double distance = Math.sqrt((c1.x - c2.x)^2 + (c1.y - c2.y)^2);
                             if(distance > ((QuickFarCityVisitObjective) go).x) {
-                                toVisit.add(c1);
-                                toVisit.add(c2);
+                                for(Vertex<Location> v : g.ingoing.get(locations[c1.y][c1.x])) {
+                                    v.distance = v.distance - go.points * 100000;
+                                }
+                                for(Vertex<Location> v : g.ingoing.get(locations[c2.y][c2.x])) {
+                                    v.distance = v.distance - go.points * 100000;
+                                }
                             }
                         }
                     }
@@ -156,62 +172,9 @@ public class Main {
         int xe = game.end.x;
         int ye = game.end.y;
 
-        for(int i = 0; i < toVisit.size(); i++) {
-
-            if(i == 0) {
-                xe = toVisit.get(i).x;
-                ye = toVisit.get(i).y;
-            }
-            else {
-                xs = toVisit.get(i).x;
-                ys = toVisit.get(i).y;
-                xe = toVisit.get(i).x;
-                ye = toVisit.get(i).y;
-            }
-
-            List<Vertex<Location>> ans =  aStar.computePath(locations[ys][xs], locations[ye][xe]);
-
-            boolean car = false;
-
-            for(Vertex<Location> v : ans) {
-                switch (v.type) {
-                    case "Car":
-                        if(!car) {
-                            solution.add("SET_PRIMARY_TRANSPORTATION CAR");
-                            car = true;
-                        }
-                        solution.add("TRAVEL " + getDirection(v.from, v.to));
-                        break;
-                    case "Bike":
-                    case "Boat":
-                        if(car) {
-                            solution.add("SET_PRIMARY_TRANSPORTATION BIKE");
-                            car = false;
-                        }
-                        solution.add("TRAVEL " + getDirection(v.from, v.to));
-                        break;
-                    case "Flight":
-                        solution.add("FLIGHT " + cityLocation.get(v.to).name);
-                        break;
-                    case "Bus":
-                        solution.add("BUS " + cityLocation.get(v.to).name);
-                        break;
-                    case "Train":
-                        solution.add("TRAIN " + cityLocation.get(v.to).name);
-                        break;
-                }
-            }
-        }
-
-        if(toVisit.size() > 0) {
-            xs = toVisit.get(toVisit.size()-1).x;
-            xs = toVisit.get(toVisit.size()-1).y;
-        }
-        //To comment out
-
         List<Vertex<Location>> ans =  aStar.computePath(locations[ys][xs], locations[ye][xe]);
 
-        boolean car = false;
+        boolean car = true;
 
         for(Vertex<Location> v : ans) {
             switch (v.type) {
@@ -260,8 +223,8 @@ public class Main {
 	
 	public static void main(String[] args) {
 		Api.setApiKey(API_KEY);
-		Api.initGame();
-		GameState game = Api.getMyLastGame();
+		//Api.initGame();
+		GameState game = Api.getGame(4952);
 		List<String> solution = solve(game);
 		Api.submitSolution(solution, game.id);
 	}
