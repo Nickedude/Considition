@@ -1,0 +1,23 @@
+import java.util.*;
+
+public class test_old {
+	public static void main (String[] args) {
+		Graph<String> g = new Graph<String>();
+		g.addNode("A");
+		g.addNode("B");
+		g.addNode("C");
+		g.addEdge("A","B",1);
+		g.addEdge("A","C",10);
+		g.addEdge("B","C",1);
+
+		AStar<String> pathcalc = new AStar<String>(g);
+		pathcalc.computePath("A","C");
+		System.out.println(pathcalc.getPathLength());
+
+		Iterator<String> path = pathcalc.getPath();
+		while(path.hasNext()) {
+			System.out.println(path.next());
+		}
+
+	}
+}
