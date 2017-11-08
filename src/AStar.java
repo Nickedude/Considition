@@ -33,8 +33,6 @@ class AStar<E> {    // :-(
         while (!q.isEmpty()) {
             Node wrapper = q.poll();            // Get the data of the wrapped node
             E n = (E) wrapper.node;                 // Get the node we're processing
-            if (n == to)
-                break;
 
             if (!visited.contains(n)) {
                 visited.add(n);
@@ -44,13 +42,13 @@ class AStar<E> {    // :-(
 
                     int wait = graph.getWait(nv, wrapper.time);
                     int time = wrapper.time + wait + nv.distance;
-                    int cost = costs.get(n) + nv.distance + wait;
+                    int cost = costs.get(n) + nv.distance; // wait;
                     int dist = graph.getDistance(e, to);
 
                     if (!visited.contains(e) && costs.get(e) > cost) {
                         costs.put(e, cost);
                         predecessor.put(e, nv);
-                        q.add(new Node(e, cost, dist, time));
+                        q.add(new Node<>(e, cost, dist, time));
                     }
                 }
             }

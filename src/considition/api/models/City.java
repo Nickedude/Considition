@@ -7,4 +7,8 @@ public class City extends Location {
 	public List<String> hasFlightTo;
 	public List<String> hasTrainTo;
 	public List<String> hasBusTo;
+
+	public City (int x, int y) {
+		super(x,y);
+	}
 }
