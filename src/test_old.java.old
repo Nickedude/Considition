@@ -2,7 +2,7 @@ import java.util.*;
 
 public class test_old {
 	public static void main (String[] args) {
-		Graph<String> g = new Graph<String>();
+		/*Graph<String> g = new Graph<String>();
 		g.addNode("A");
 		g.addNode("B");
 		g.addNode("C");
@@ -17,7 +17,7 @@ public class test_old {
 		Iterator<String> path = pathcalc.getPath();
 		while(path.hasNext()) {
 			System.out.println(path.next());
-		}
+		}*/
 
 	}
 }

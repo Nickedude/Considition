@@ -6,7 +6,7 @@ import java.util.*;
 **/
 public class DijkstraStringPath implements Path<String> {
  	
-	AStar<String> d;
+	/*AStar<String> d;
 
 	@SuppressWarnings("unchecked")
  	public DijkstraStringPath(List<BStop> stops, List<BLineTable> lineTable) {
@@ -27,10 +27,11 @@ public class DijkstraStringPath implements Path<String> {
 	}
 	/**
 	*	Computes the shortest paths between two nodes in the graph
-	**/
+	**//*
+	*
 	@SuppressWarnings("unchecked")
 	public void computePath(String from, String to) {
-		d.computePath(from,to);
+		//d.computePath(from,to);
 	}
 
 	/**
@@ -38,16 +39,15 @@ public class DijkstraStringPath implements Path<String> {
 	*	if no such path exists or if it hasn't been calculated.
 	*	@return An iterator representing the path.
 	**/
-	@SuppressWarnings("unchecked")
-	public Iterator<String> getPath() {
+	/*public Iterator<String> getPath() {
 		return d.getPath();
-	}
+	}*/
 
 	/**
 	*	Returns the length of the path starting in "from" and ending in "to".
 	*	@return The length of the path. Is infinity if no such path exists or if it hasn't been calculated.
 	**/
-	public int getPathLength() {
+	/*public int getPathLength() {
 		return d.getPathLength();
-	}
+	}*/
 }

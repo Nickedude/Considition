@@ -17,9 +17,9 @@ class Graph<E> {
         }
     }
 
-    void addEdge (E from, E to, int cost) {
+    void addEdge (E from, E to, int cost, String type) {
         if(nodes.containsKey(from) && nodes.containsKey(to)) {
-            nodes.get(from).add(new Vertex<>(from, to, cost));
+            nodes.get(from).add(new Vertex<>(from, to, cost, type));
         }
     }
 

@@ -32,7 +32,7 @@ class AStar<E> {    // :-(
         q.add(new Node(from, 0, graph.getDistance(from, to), 0));
         while (!q.isEmpty()) {
             Node wrapper = q.poll();            // Get the data of the wrapped node
-            E n = wrapper.node;                 // Get the node we're processing
+            E n = (E) wrapper.node;                 // Get the node we're processing
             if (n == to)
                 break;
 
@@ -65,7 +65,7 @@ class AStar<E> {    // :-(
             v = predecessor.get(v.from);
         }
 
-        ans.add(new Vertex<>(from, from, 0));
+        ans.add(new Vertex<>(from, from, 0, "Roads"));
         Collections.reverse(ans);
         path = ans;
         return ans;
@@ -90,20 +90,6 @@ class AStar<E> {    // :-(
             return i;
         }
         return -1;
-    }
-
-    public class Node {
-        final int cost; // Current lowest cost to this node.
-        final int time; // Time that you arrive at this node.
-        final int distance; // Distance to goal.
-        final E node;
-
-        Node(E n, int c, int d, int t) {
-            node = n;
-            cost = c;
-            distance = d;
-            time = t;
-        }
     }
 
     public class NodeComparator implements Comparator<Node> {
