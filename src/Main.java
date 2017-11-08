@@ -31,7 +31,7 @@ public class Main {
         for(TransportationMethod t :  game.transportation) {
             double time = 1.0 / t.speed;
             double pollution = time * t.pollutions;
-            int cost = (int) (pollution * 10000000);
+            int cost = (int) (pollution * 1000000 + time * 1000000);
             costs.put(t.name, cost);
         }
 
@@ -122,7 +122,7 @@ public class Main {
             if (go instanceof VisitCityObjective) {
                 City c = cityCoords.get(((VisitCityObjective) go).x);
                 for(Vertex<Location> v : g.nodes.get(locations[c.y][c.x])) {
-                    v.distance = v.distance - go.points;
+                    v.distance = v.distance - go.points * 100000;
                 }
             }
 
