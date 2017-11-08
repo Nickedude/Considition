@@ -150,18 +150,66 @@ public class Main {
         }
 
         AStar<Location> aStar = new AStar<>(g);
-
+        List<String> solution = new ArrayList<String>();
         int xs = game.start.x;
         int ys = game.start.y;
         int xe = game.end.x;
         int ye = game.end.y;
 
-        for(City c : toVisit) {
+        for(int i = 0; i < toVisit.size(); i++) {
 
+            if(i == 0) {
+                xe = toVisit.get(i).x;
+                ye = toVisit.get(i).y;
+            }
+            else {
+                xs = toVisit.get(i).x;
+                ys = toVisit.get(i).y;
+                xe = toVisit.get(i).x;
+                ye = toVisit.get(i).y;
+            }
+
+            List<Vertex<Location>> ans =  aStar.computePath(locations[ys][xs], locations[ye][xe]);
+
+            boolean car = false;
+
+            for(Vertex<Location> v : ans) {
+                switch (v.type) {
+                    case "Car":
+                        if(!car) {
+                            solution.add("SET_PRIMARY_TRANSPORTATION CAR");
+                            car = true;
+                        }
+                        solution.add("TRAVEL " + getDirection(v.from, v.to));
+                        break;
+                    case "Bike":
+                    case "Boat":
+                        if(car) {
+                            solution.add("SET_PRIMARY_TRANSPORTATION BIKE");
+                            car = false;
+                        }
+                        solution.add("TRAVEL " + getDirection(v.from, v.to));
+                        break;
+                    case "Flight":
+                        solution.add("FLIGHT " + cityLocation.get(v.to).name);
+                        break;
+                    case "Bus":
+                        solution.add("BUS " + cityLocation.get(v.to).name);
+                        break;
+                    case "Train":
+                        solution.add("TRAIN " + cityLocation.get(v.to).name);
+                        break;
+                }
+            }
         }
 
+        if(toVisit.size() > 0) {
+            xs = toVisit.get(toVisit.size()-1).x;
+            xs = toVisit.get(toVisit.size()-1).y;
+        }
+        //To comment out
+
         List<Vertex<Location>> ans =  aStar.computePath(locations[ys][xs], locations[ye][xe]);
-        List<String> solution = new ArrayList<String>();
 
         boolean car = false;
 
