@@ -156,6 +156,10 @@ public class Main {
         int xe = game.end.x;
         int ye = game.end.y;
 
+        for(City c : toVisit) {
+
+        }
+
         List<Vertex<Location>> ans =  aStar.computePath(locations[ys][xs], locations[ye][xe]);
         List<String> solution = new ArrayList<String>();
 
